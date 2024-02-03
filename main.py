@@ -16,8 +16,8 @@ class Example(QWidget):
     def initUI(self):
         uic.loadUi('web.ui', self)
         self.setWindowTitle('Отображение карты')
-        self.scope = "площадь Мира, 3" #изменить
-        self.coords = (54.515280, 36.243843)
+        self.adress = "площадь Мира, 3" #изменить
+        self.coords = [54.515280, 36.243843]
         self.delta = 0.003
         self.screen_size = 600, 450
         self.getImage()
@@ -48,8 +48,20 @@ class Example(QWidget):
             if self.delta > 0.0002:
                 self.delta /= 2
         elif event.key() == Qt.Key_PageDown:
-            if self.delta < 0.01:
+            if self.delta < 0.1:
                 self.delta *= 2
+        elif event.key() == Qt.Key_Up:
+            if self.coords[0] + (self.screen_size[1] * self.delta**2) < 80:
+                self.coords[0] += (self.screen_size[1] * self.delta**2)
+        elif event.key() == Qt.Key_Down:
+            if self.coords[0] - (self.screen_size[1] * self.delta**2) > 0:
+                self.coords[0] -= (self.screen_size[1] * self.delta**2)
+        elif event.key() == Qt.Key_Left:
+            if self.coords[1] - (self.screen_size[1] * self.delta**2) > 0:
+                self.coords[1] -= (self.screen_size[1] * self.delta**2)
+        elif event.key() == Qt.Key_Right:
+            if self.coords[1] + (self.screen_size[1] * self.delta**2) < 80:
+                self.coords[1] += (self.screen_size[1] * self.delta**2)
         self.getImage()
 
     def closeEvent(self, event):
