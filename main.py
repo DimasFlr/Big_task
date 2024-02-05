@@ -22,6 +22,7 @@ class Example(QWidget):
         self.toponym_to_find = "Калуга, площадь Мира, 3"
         self.toponym_coodrinates = "36.243843 54.515280"
         self.kind = 'map'
+        self.familiar_places = []
         self.delta = 0.003
         self.screen_size = 600, 450
         self.getImage()
@@ -63,6 +64,8 @@ class Example(QWidget):
                 "featureMember"][0]["GeoObject"]
             # Координаты центра топонима:
             self.toponym_coodrinates = toponym["Point"]["pos"]
+            if self.toponym_coodrinates not in self.familiar_places:
+                self.familiar_places.append(self.toponym_coodrinates)
             self.getImage()
         except KeyError:
             pass
@@ -79,6 +82,13 @@ class Example(QWidget):
             "spn": ",".join([str(self.delta), str(self.delta)]),
             "l": self.kind
         }
+        if self.familiar_places:
+            pt_param = []
+            for el in self.familiar_places:
+                long, latt = el.split(" ")[0], el.split(" ")[1]
+                pt_param.append(f"{long},{latt},pm2vvl")
+            pt_param = '~'.join(pt_param)
+            map_params["pt"] = pt_param
         response = requests.get(api_server, params=map_params)
 
         with open(self.map_file, "wb") as file:
